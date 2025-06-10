@@ -1,0 +1,37 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+        - echo "// Setting up environment variables"
+        - echo "NEXTAUTH_URL=$NEXTAUTH_URL" >> .env
+        - echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET" >> .env
+        - echo "COGNITO_REGION=$COGNITO_REGION" >> .env
+        - echo "COGNITO_CLIENT_ID=$COGNITO_CLIENT_ID" >> .env
+        - echo "COGNITO_USER_POOL_ID=$COGNITO_USER_POOL_ID" >> .env
+        - echo "COGNITO_CLIENT_SECRET=$COGNITO_CLIENT_SECRET" >> .env
+        - echo "API_BASE_URL=$API_BASE_URL" >> .env
+        # Export variables for runtime
+        - export NEXTAUTH_URL=$NEXTAUTH_URL
+        - export NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+        - export COGNITO_REGION=$COGNITO_REGION
+        - export COGNITO_CLIENT_ID=$COGNITO_CLIENT_ID
+        - export COGNITO_USER_POOL_ID=$COGNITO_USER_POOL_ID
+        - export COGNITO_CLIENT_SECRET=$COGNITO_CLIENT_SECRET
+        - export API_BASE_URL=$API_BASE_URL
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
+  customHeaders:
+    - pattern: "**/*"
+      headers:
+        - key: Cache-Control
+          value: public, max-age=0, must-revalidate
